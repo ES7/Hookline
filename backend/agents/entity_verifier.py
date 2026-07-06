@@ -64,3 +64,31 @@ def filter_verified_sources(search_results: list, company_name: str) -> list:
         if is_source_about_company(content, url, company_name):
             verified.append(r)
     return verified
+
+
+def is_text_about_person(content: str, url: str, prospect_name: str) -> bool:
+    """
+    Require the prospect's name to appear as a name, not as a loose character
+    match. This blocks fake one-letter names and invented people at real
+    companies before LLM tokens are spent.
+    """
+    norm_name = _normalize(prospect_name)
+    norm_content = _normalize(content)
+    norm_url = _normalize(url)
+    name_words = [w for w in norm_name.split() if len(w) > 1]
+    if len(name_words) < 2:
+        return False
+
+    phrase_pattern = r"\b" + r"\s+".join(re.escape(w) for w in name_words) + r"\b"
+    if re.search(phrase_pattern, norm_content) or re.search(phrase_pattern, norm_url):
+        return True
+
+    significant_words = [w for w in name_words if len(w) > 2]
+    return len(significant_words) >= 2 and all(_word_present(w, norm_content) for w in significant_words)
+
+
+def any_source_mentions_person(search_results: list, prospect_name: str) -> bool:
+    return any(
+        is_text_about_person(r.get("content", ""), r.get("url", ""), prospect_name)
+        for r in search_results
+    )

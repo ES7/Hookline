@@ -1,4 +1,4 @@
-prospect_name,company_name,edge_case,tone
-Jensen Huang,NVIDIA,Happy Path,Direct
-Brian Chesky,Airbnb,No Recent News,Casual
-Andy Jassy,Amazon,Company in Bad News,Formal
+prospect_name,company_name,manual_override,tone
+Jensen Huang,NVIDIA,none,direct
+Brian Chesky,Airbnb,no_news,casual
+Andy Jassy,Amazon,bad_news,formal

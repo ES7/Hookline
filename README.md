@@ -53,7 +53,18 @@ Create `.env` in `backend/`:
 ```
 GROQ_API_KEY=your_groq_key
 TAVILY_API_KEY=your_tavily_key
+FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...}
+ALLOWED_ORIGINS=http://localhost:5173,https://your-frontend-domain.com
 ```
+
+For local-only backend development without Firebase Admin configured, set:
+```
+AUTH_DISABLED_FOR_LOCAL_DEV=true
+```
+
+Do not use the local auth bypass in production. The backend verifies Firebase ID
+tokens, scopes run history by authenticated user, and reserves monthly quota
+server-side before any expensive AI pipeline starts.
 
 ```bash
 uvicorn main:app --reload

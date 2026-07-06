@@ -7,8 +7,13 @@ export default function EmailOutput({ result, research }) {
   }
 
   const scenarioLabel = { standard: "Happy Path (auto-detected)", no_news: "No Recent News (auto-detected)", job_change: "Recent Job Change (auto-detected)", bad_news: "Company in Bad News (auto-detected)", competitor: "Uses Competitor (auto-detected)" }
-  let score = null
-  try { score = typeof result.email_score === "string" ? JSON.parse(result.email_score) : result.email_score } catch (_) {}
+  const score = (() => {
+    try {
+      return typeof result.email_score === "string" ? JSON.parse(result.email_score) : result.email_score
+    } catch {
+      return null
+    }
+  })()
   const scoreColor = (v) => v >= 8 ? "#2e7d32" : v >= 6 ? "#e65100" : "#cc0000"
 
   // Parse confidence from hook text

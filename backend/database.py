@@ -24,13 +24,20 @@ def init_db():
             status TEXT
         )
     ''')
+    columns = [row[1] for row in conn.execute("PRAGMA table_info(runs)").fetchall()]
+    if "uid" not in columns:
+        conn.execute("ALTER TABLE runs ADD COLUMN uid TEXT DEFAULT 'anonymous'")
     conn.commit()
     conn.close()
 
 def save_run(data: dict):
     conn = sqlite3.connect(DB_PATH)
     conn.execute('''
-        INSERT OR REPLACE INTO runs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        INSERT OR REPLACE INTO runs (
+            id, timestamp, prospect, company, detected_scenario,
+            scenario_confidence, scenario_reasoning, research_summary, sources,
+            hook, email_draft, email_score, subject_variants, duration, status, uid
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     ''', (
         data["run_id"],
         data["timestamp"],
@@ -46,17 +53,24 @@ def save_run(data: dict):
         data.get("email_score", ""),
         json.dumps(data.get("subject_variants", [])),
         data.get("duration", 0),
-        data["status"]
+        data["status"],
+        data.get("uid", "anonymous"),
     ))
     conn.commit()
     conn.close()
 
-def get_all_runs():
+def get_all_runs(uid: str = None):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    rows = conn.execute(
-        'SELECT * FROM runs ORDER BY timestamp DESC'
-    ).fetchall()
+    if uid:
+        rows = conn.execute(
+            'SELECT * FROM runs WHERE uid = ? ORDER BY timestamp DESC',
+            (uid,)
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            'SELECT * FROM runs ORDER BY timestamp DESC'
+        ).fetchall()
     conn.close()
     result = []
     for row in rows:
@@ -73,15 +87,16 @@ def get_all_runs():
         result.append(d)
     return result
 
-def get_existing_run(prospect: str, company: str, manual_override: str):
+def get_existing_run(prospect: str, company: str, uid: str):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     row = conn.execute(
         '''SELECT * FROM runs 
            WHERE LOWER(prospect)=LOWER(?) 
            AND LOWER(company)=LOWER(?) 
+           AND uid = ?
            ORDER BY timestamp DESC LIMIT 1''',
-        (prospect, company)
+        (prospect, company, uid)
     ).fetchone()
     conn.close()
     if row:

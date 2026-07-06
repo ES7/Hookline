@@ -137,8 +137,159 @@ main {
 }
 
 .btn-primary:disabled {
-  background: #6C63FF;
+  background: #b8b5ff;
   cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  border: 1px solid #6c63ff;
+  color: #6c63ff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-secondary:disabled {
+  border-color: #d0d0d0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.segment-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.segment-tabs button {
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.segment-tabs button.active {
+  background: #6c63ff;
+  color: white;
+  border-color: #6c63ff;
+}
+
+.error-box {
+  background: #fff0f0;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #cc0000;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.field-warning {
+  font-size: 12px;
+  color: #cc0000;
+  margin-bottom: 8px;
+}
+
+.notice-box {
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.notice-box p {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #7d4a00;
+}
+
+.muted {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.csv-example {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: #555;
+}
+
+.file-input {
+  margin-bottom: 12px;
+}
+
+.loaded-list {
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: #555;
+}
+
+.loaded-list p {
+  font-size: 13px;
+  color: #2e7d32;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.batch-results {
+  margin-top: 20px;
+}
+
+.batch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.batch-header p {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.batch-row {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+}
+
+.batch-row p {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.status-ok,
+.status-error {
+  font-size: 12px;
+}
+
+.status-ok {
+  color: #2e7d32;
+}
+
+.status-error {
+  color: #cc0000;
 }
 
 /* Status */
