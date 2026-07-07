@@ -38,7 +38,7 @@ def _init_firebase_admin():
     elif project_id:
         firebase_admin.initialize_app(options={"projectId": project_id})
     else:
-        return None
+        firebase_admin.initialize_app()
 
     _firebase_ready = True
     return firebase_admin
