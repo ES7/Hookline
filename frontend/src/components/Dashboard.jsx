@@ -20,7 +20,9 @@ export default function Dashboard() {
         setError(null)
       } catch (err) {
         const detail = err.response?.data?.detail
-        setError(typeof detail === "string" ? detail : err.message)
+        const status = err.response?.status || "Network Error"
+        const url = err.config?.url || "Unknown URL"
+        setError(typeof detail === "string" ? detail : `${err.message} (${status} at ${url})`)
       }
     }
     fetchRuns()

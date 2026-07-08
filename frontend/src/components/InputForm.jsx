@@ -156,7 +156,7 @@ export default function InputForm({ setResult, setLoading, setStages, setResearc
       })
       if (!res.ok) throw new Error(await apiErrorMessage(res))
       const text = await res.text()
-      if (!text) throw new Error("Backend returned an empty response. Verify your VITE_BACKEND_URL.")
+      if (!text) throw new Error(`Backend empty response from ${res.url} (Status: ${res.status}). Verify VITE_BACKEND_URL.`)
       const data = JSON.parse(text)
       if (data.exists) {
         setExisting(data.run)
