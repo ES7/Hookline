@@ -5,7 +5,7 @@ import { useAuth } from "../AuthContext"
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000"
 
 export default function Dashboard() {
-  const { user, authHeaders } = useAuth()
+  const { user, authHeaders, fetchRunsLocally } = useAuth()
   const [runs, setRuns] = useState([])
   const [selected, setSelected] = useState(null)
   const [error, setError] = useState(null)
@@ -14,19 +14,32 @@ export default function Dashboard() {
     const fetchRuns = async () => {
       if (!user) return
       try {
-        const headers = await authHeaders()
-        const res = await axios.get(`${BACKEND_URL}/runs`, { headers })
-        setRuns(res.data)
+        const firebaseRuns = await fetchRunsLocally()
+        
+        let backendRuns = []
+        try {
+          const headers = await authHeaders()
+          const res = await axios.get(`${BACKEND_URL}/runs`, { headers })
+          backendRuns = res.data
+        } catch (err) {
+          console.warn("Backend API failed to return runs:", err)
+        }
+
+        const allRunsMap = new Map()
+        backendRuns.forEach(r => allRunsMap.set(r.run_id || r.id, r))
+        firebaseRuns.forEach(r => allRunsMap.set(r.run_id || r.id, r))
+        
+        const mergedRuns = Array.from(allRunsMap.values())
+        mergedRuns.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        
+        setRuns(mergedRuns)
         setError(null)
       } catch (err) {
-        const detail = err.response?.data?.detail
-        const status = err.response?.status || "Network Error"
-        const url = err.config?.url || "Unknown URL"
-        setError(typeof detail === "string" ? detail : `${err.message} (${status} at ${url})`)
+        setError(err.message)
       }
     }
     fetchRuns()
-  }, [user, authHeaders])
+  }, [user, authHeaders, fetchRunsLocally])
 
   const scenarioLabel = {
     standard: "Happy Path",

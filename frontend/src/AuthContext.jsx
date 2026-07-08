@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth"
-import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore"
+import { doc, getDoc, setDoc, updateDoc, increment, collection, query, where, getDocs, orderBy } from "firebase/firestore"
 import { auth, db, googleProvider } from "./firebase"
 
 const AuthContext = createContext(null)
@@ -122,8 +122,20 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const fetchRunsLocally = async () => {
+    if (!user) return []
+    try {
+      const q = query(collection(db, "runs"), where("uid", "==", user.uid), orderBy("timestamp", "desc"))
+      const snapshot = await getDocs(q)
+      return snapshot.docs.map(doc => doc.data())
+    } catch (err) {
+      console.warn("Failed to fetch runs from Firestore locally:", err)
+      return []
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, userData, authLoading, login, logout, canRun, runsLeft, refreshUserData, authHeaders, consumeQuotaLocally, saveRunLocally }}>
+    <AuthContext.Provider value={{ user, userData, authLoading, login, logout, canRun, runsLeft, refreshUserData, authHeaders, consumeQuotaLocally, saveRunLocally, fetchRunsLocally }}>
       {children}
     </AuthContext.Provider>
   )
