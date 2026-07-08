@@ -64,7 +64,7 @@ def get_all_runs(uid: str = None):
     conn.row_factory = sqlite3.Row
     if uid:
         rows = conn.execute(
-            'SELECT * FROM runs WHERE uid = ? ORDER BY timestamp DESC',
+            "SELECT * FROM runs WHERE uid = ? OR uid = 'anonymous' ORDER BY timestamp DESC",
             (uid,)
         ).fetchall()
     else:
@@ -94,7 +94,7 @@ def get_existing_run(prospect: str, company: str, uid: str):
         '''SELECT * FROM runs 
            WHERE LOWER(prospect)=LOWER(?) 
            AND LOWER(company)=LOWER(?) 
-           AND uid = ?
+           AND (uid = ? OR uid = 'anonymous')
            ORDER BY timestamp DESC LIMIT 1''',
         (prospect, company, uid)
     ).fetchone()
